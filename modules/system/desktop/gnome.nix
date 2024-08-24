@@ -15,7 +15,7 @@
     # Configure keymap in X11
     services.xserver.xkb = {
       layout = "se";
-      variant = "us";
+      variant = "se";
     };
 
     # Some apps (e.g. Plex) needs this to login/click on links.

@@ -6,8 +6,8 @@ with lib.hm.gvariant;
 {
   dconf.settings = {
     "org/gnome/control-center" = {
-      last-panel = "background";
-      window-state = mkTuple [ 980 640 false ];
+      last-panel = "display";
+      window-state = mkTuple [ 1271 870 false ];
     };
 
     "org/gnome/desktop/app-folders" = {
@@ -34,21 +34,17 @@ with lib.hm.gvariant;
     };
 
     "org/gnome/desktop/input-sources" = {
-      sources = [ (mkTuple [ "xkb" "se+us" ]) ];
+      mru-sources = [ (mkTuple [ "xkb" "se+us" ]) ];
+      sources = [ (mkTuple [ "xkb" "se" ]) ];
       xkb-options = [ "terminate:ctrl_alt_bksp" ];
     };
 
-    "org/gnome/desktop/interface" = {
-      show-battery-percentage = true;
-      toolkit-accessibility = false;
-    };
-
     "org/gnome/desktop/notifications" = {
-      application-children = [ "brave-browser" "org-gnome-evolution-alarm-notify" ];
+      application-children = [ "microsoft-edge" "org-gnome-evolution-alarm-notify" ];
     };
 
-    "org/gnome/desktop/notifications/application/brave-browser" = {
-      application-id = "brave-browser.desktop";
+    "org/gnome/desktop/notifications/application/microsoft-edge" = {
+      application-id = "microsoft-edge.desktop";
     };
 
     "org/gnome/desktop/notifications/application/gnome-power-panel" = {
@@ -83,8 +79,8 @@ with lib.hm.gvariant;
     "org/gnome/desktop/screensaver" = {
       color-shading-type = "solid";
       picture-options = "zoom";
-      picture-uri = "/home/felbjar/.nix-config/resources/wallpapers/candy-river-land.png";
-      picture-uri-dark = "/home/felbjar/.nix-config/resources/wallpapers/candy-river-land.png";
+      picture-uri = "/home/esaiaswestberg/.nix-config/resources/wallpapers/candy-river-land.png";
+      picture-uri-dark = "/home/esaiaswestberg/.nix-config/resources/wallpapers/candy-river-land.png";
       primary-color = "#3a4ba0";
       secondary-color = "#2f302f";
     };
@@ -117,11 +113,11 @@ with lib.hm.gvariant;
     };
 
     "org/gnome/portal/filechooser/alacritty" = {
-      last-folder-path = "/home/felbjar/Programming/Nix";
+      last-folder-path = "/home/esaiaswestberg/Documents/Repositories";
     };
 
-    "org/gnome/portal/filechooser/brave-browser" = {
-      last-folder-path = "/home/felbjar/Downloads";
+    "org/gnome/portal/filechooser/microsoft-edge" = {
+      last-folder-path = "/home/esaiaswestberg/Downloads";
     };
 
     "org/gnome/settings-daemon/plugins/media-keys" = {
@@ -134,9 +130,13 @@ with lib.hm.gvariant;
       name = "Open Terminal";
     };
 
+    "org/gnome/settings-daemon/plugins/power" = {
+      sleep-inactive-ac-timeout = 7200;
+    };
+
     "org/gnome/shell" = {
       enabled-extensions = [ "blur-my-shell@aunetx" "gnome-ui-tune@itstime.tech" "appindicatorsupport@rgcjonas.gmail.com" ];
-      favorite-apps = [ "brave-browser.desktop" "Alacritty.desktop" "org.gnome.Nautilus.desktop" ];
+      favorite-apps = [ "microsoft-edge.desktop" "Alacritty.desktop" "org.gnome.Nautilus.desktop" ];
       welcome-dialog-last-shown-version = "46.2";
     };
 

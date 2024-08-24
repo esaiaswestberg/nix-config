@@ -14,6 +14,7 @@
           ll = "ls -l";
           la = "ls -la";
           cd = "z";
+          rebuild = "sudo nixos-rebuild switch --flake /home/esaiaswestberg/nix-config#LOCA";
       };
 
       history = {
