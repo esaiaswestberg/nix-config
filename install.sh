@@ -5,7 +5,7 @@
 # Automatied installation of nix-config
 
 # Clone files
-git clone https://github.com/SuperGamer1337/nix-config.git ./nix-config
+git clone https://github.com/EsaiasWestberg/nix-config.git ./nix-config
 
 # Give some information that the scirpt can use when generating the initial configuration
 echo "Installing new system..."
@@ -15,23 +15,23 @@ read MACHINE_NAME
 # Check if machine name is already in flake, if so, use the existing configuration
 if ! grep -q "$MACHINE_NAME = lib.nixosSystem {" ./nix-config/flake.nix; then
 
-echo "What is the full name of the user? [Default: Felix Bjerhem Aronsson]"
+echo "What is the full name of the user? [Default: Esaias Westberg]"
 read FULL_NAME
-echo "What is the username? [Default: felbjar]"
+echo "What is the username? [Default: esaiaswestberg]"
 read USERNAME
-echo "What is the email? [Default: felix.b.aronsson@gmail.com]"
+echo "What is the email? [Default: esaias@westbergs.se]"
 read EMAIL
 echo "What is the configuration directory? [Default: ~/.nix-config]"
 read CONFIG_DIR
 
 if [ -z "$FULL_NAME" ]; then
-        FULL_NAME="Felix Bjerhem Aronsson"
+        FULL_NAME="Esaias Westberg"
 fi
 if [ -z "$USERNAME" ]; then
-        USERNAME="felbjar"
+        USERNAME="esaiaswestbergs"
 fi
 if [ -z "$EMAIL" ]; then
-        EMAIL="felix.b.aronsson@gmail.com"
+        EMAIL="esaias@westbergs.se"
 fi
 
 # Get the current state version from /etc/nixos/configuration.nix

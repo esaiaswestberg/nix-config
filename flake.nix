@@ -1,5 +1,5 @@
 {
-	description = "Flake of SuperGamer1337";
+	description = "Flake of Esaias Westberg";
 
 	outputs = inputs@{ nixpkgs, ... }:
 	let
@@ -21,19 +21,11 @@
 
 	in {
 		nixosConfigurations = {
-			roctim-nix = lib.nixosSystem {
+			LOCA = lib.nixosSystem {
 				inherit system;
 				inherit specialArgs;
 				modules = [ 
-					./hosts/roctim-nix/configuration.nix
-				] ++ commonModules;
-			};
-
-			SuperNix1337 = lib.nixosSystem {
-				inherit system;
-				inherit specialArgs;
-				modules = [ 
-					./hosts/SuperNix1337/configuration.nix
+					./hosts/LOCA/configuration.nix
 				] ++ commonModules;
 			};
 

@@ -12,7 +12,7 @@
   config = lib.mkIf config.systemSettings.services.tailscale.enable {
     services.tailscale.enable = true;
     networking.hosts = lib.mkIf (config.profiles.dev.enable) {
-      "100.123.248.62" = [ "blue-eyed" "traefik.blue-eyed" "whoami.blue-eyed" "auth.blue-eyed" ];
+      "127.0.0.1" = [ "blue-eyed" "traefik.blue-eyed" "whoami.blue-eyed" "auth.blue-eyed" ];
     };
   };
 }

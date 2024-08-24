@@ -14,13 +14,14 @@
     ];
 
   systemSettings = {
-    name = "SuperNix1337"; 
+    name = "LOCA"; 
     theme = "catppuccin";
 
     desktop = {
       displayManager = "gdm";
 
-      enable = "hyprland";
+      #enable = "hyprland";
+      enable = "gnome";
 
       hyprland = {
         monitors = [
@@ -49,8 +50,6 @@
       };
     };
 
-    dualBoot.enable = true;
-
     hardware = {
       openrgb.enable = true;
       cpu.vendor = "amd";
@@ -61,13 +60,12 @@
   };
 
   userSettings = {
-    name = "Felix Bjerhem Aronsson";
-    username = "supergamer1337";
-    email = "felix.b.aronsson@gmail.com";
+    name = "Esaias Westberg";
+    username = "esaiaswestberg";
+    email = "esaias@westbergs.se";
   };
 
   profiles = {
-    work.enable = true;
     dev.enable = true;
   };
 

@@ -5,19 +5,19 @@
     # User settings
     userSettings.name = lib.mkOption {
       type = lib.types.str;
-      default = "Felix Bjerhem Aronsson";
+      default = "Esaias Westbergs";
       description = "The full name of the user account.";
     };
 
     userSettings.username = lib.mkOption {
       type = lib.types.str;
-      default = "felbjar";
+      default = "esaiaswestberg";
       description = "The username fo the user account.";
     };
 
     userSettings.email = lib.mkOption {
       type = lib.types.str;
-      default = "felix.b.aronsson@gmail.com";
+      default = "esaias@westbergs.se";
       description = "The email address of the user account.";
     };
 
