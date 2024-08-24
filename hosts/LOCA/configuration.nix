@@ -68,6 +68,10 @@
   profiles = {
     dev.enable = true;
   };
+  
+  environment.systemPackages = with pkgs; (import ./packages.nix pkgs) ++ [
+    # Add more packages directly here if needed
+  ];
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
