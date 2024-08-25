@@ -3,4 +3,5 @@ pkgs: [
   pkgs.jdk22
 
   pkgs.steam
+  pkgs.thunderbird
 ]
