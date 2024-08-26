@@ -27,15 +27,15 @@
         plugins = [ "git" "direnv" ];
       };
 
-      initExtra = ''
-        tmux
-      '';
+      #initExtra = ''
+      #  fastfetch
+      #'';
     };
 
     programs.oh-my-posh = {
       enable = true;
       enableZshIntegration = true;
-      useTheme = "bubblesextra";
+      useTheme = "catppuccin";
     };
   };
 }
