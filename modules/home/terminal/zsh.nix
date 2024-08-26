@@ -28,7 +28,7 @@
       };
 
       initExtra = ''
-        fastfetch
+        tmux
       '';
     };
 

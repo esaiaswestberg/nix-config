@@ -8,7 +8,6 @@
     wayland.windowManager.hyprland.settings = {
       input = {
         kb_layout = "se";
-        kb_variant = "us";
         follow_mouse = 1;
         sensitivity = 0;
         accel_profile = "flat";

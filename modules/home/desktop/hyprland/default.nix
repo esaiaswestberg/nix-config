@@ -29,8 +29,7 @@
       "systemctl --user start plasma-polkit-agent"
 
       # Autostart programs
-      "vesktop" "whatsapp-for-linux" "caprine" "slack"
-
+      "vesktop"
       ];
 
       monitor = osConfig.systemSettings.desktop.hyprland.monitors;
