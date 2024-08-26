@@ -10,10 +10,10 @@
         description = "Configure monitors for Hyprland";
       };
 
-      workspaces = lib.mkOption {
-        type = lib.types.listOf lib.types.lines;
-	      description = "Configure workspaces for Hyprland";
-      };
+      #workspaces = lib.mkOption {
+      #  type = lib.types.listOf lib.types.lines;
+	    #  description = "Configure workspaces for Hyprland";
+      #};
 
     };
   };

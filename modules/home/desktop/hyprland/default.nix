@@ -34,7 +34,7 @@
       ];
 
       monitor = osConfig.systemSettings.desktop.hyprland.monitors;
-      workspace = osConfig.systemSettings.desktop.hyprland.workspaces;
+      #workspace = osConfig.systemSettings.desktop.hyprland.workspaces;
     };
   };
 
