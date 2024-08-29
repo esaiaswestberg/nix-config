@@ -20,14 +20,15 @@
     desktop = {
       displayManager = "gdm";
 
-      enable = "hyprland";
+      #enable = "hyprland";
+      enable = "gnome";
 
-      hyprland = {
-        monitors = [
-          "HDMI-A-1, 1920x1080@60, 1920x0, 1"
-          "DP-1, 1920x1080@60, 3840x0, 1"
-          "DP-2, 1920x1080@60, 0x0, 1"
-        ];
+      #hyprland = {
+      #  monitors = [
+      #    "HDMI-A-1, 1920x1080@60, 1920x0, 1"
+      #    "DP-1, 1920x1080@60, 3840x0, 1"
+      #    "DP-2, 1920x1080@60, 0x0, 1"
+      #  ];
 
         #workspaces = [
         #  ### MAIN MONITOR ###
@@ -46,7 +47,7 @@
         #  "9,monitor:DVI-D-1,persistent:true,default:true"
         #  "10,monitor:DVI-D-1,persistent:true"
         #];
-      };
+      #};
     };
 
     hardware = {
