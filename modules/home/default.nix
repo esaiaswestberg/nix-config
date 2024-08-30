@@ -32,9 +32,6 @@
         vscode-fhs
         nil # Nix LSP
         nixd # Alternative LSP
-
-        # Utils
-        bitwarden-desktop
       ]
 
       # Dev profile

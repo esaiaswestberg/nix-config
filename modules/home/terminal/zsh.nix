@@ -16,6 +16,7 @@
           cd = "z";
           rebuild = "sudo nixos-rebuild switch --flake /home/esaiaswestberg/nix-config#LOCA";
 	  dev = "nix develop -c $SHELL";
+	  htop = "btop";
       };
 
       history = {
