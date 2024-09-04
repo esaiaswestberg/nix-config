@@ -75,6 +75,12 @@
 
   programs.steam.enable = true;
 
+  fileSystems."/home/esaiaswestberg/Storage" = {
+    device = "/dev/disk/by-uuid/29d01ccf-7621-4b5d-81af-e2308eb27f42";
+    fsType = "ext4";
+    #options = [ "auto" "rw" "uid=1000" "gid=100" ];
+  };
+
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
   # on your system were taken. It‘s perfectly fine and recommended to leave
