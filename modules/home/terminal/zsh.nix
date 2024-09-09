@@ -13,10 +13,19 @@
       shellAliases = {
           ll = "ls -l";
           la = "ls -a";
+	  lla = "ls -la";
           cd = "z";
           rebuild = "sudo nixos-rebuild switch --flake /home/esaiaswestberg/nix-config#LOCA";
 	  dev = "nix develop -c $SHELL";
 	  htop = "btop";
+
+	  ssh-david = "ssh -i /home/esaiaswestberg/.ssh/id_david -o IdentitiesOnly=yes ubuntu@129.151.192.63";
+	  ssh-lola = "ssh -i /home/esaiaswestberg/.ssh/id_lola -o IdentitiesOnly=yes ubuntu@158.179.203.194";
+          ssh-linode = "ssh -i /home/esaiaswestberg/.ssh/id_linode -o IdentitiesOnly=yes root@172.232.134.132";
+          ssh-intradisp = "ssh -i /home/esaiaswestberg/.ssh/intradisp -o IdentitiesOnly=yes intradisp@10.0.1.230";
+          ssh-eloquentiastudios = "ssh -i /home/esaiaswestberg/.ssh/eloquentiastudios -o IdentitiesOnly=yes opc@129.151.220.30";
+          ssh-eloquentia = "ssh-eloquentiastudios";
+          ssh-ephirant = "ssh -i /home/esaiaswestberg/.ssh/ephirant -o IdentitiesOnly=yes root@10.0.1.215";
       };
 
       history = {
