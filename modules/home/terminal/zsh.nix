@@ -15,6 +15,7 @@
           la = "ls -a";
 	  lla = "ls -la";
           cd = "z";
+	  update-channel = "sudo nix-channel --update";
           rebuild = "sudo nixos-rebuild switch --flake /home/esaiaswestberg/nix-config#LOCA";
 	  dev = "nix develop -c $SHELL";
 	  htop = "btop";
@@ -25,7 +26,7 @@
           ssh-intradisp = "ssh -i /home/esaiaswestberg/.ssh/intradisp -o IdentitiesOnly=yes intradisp@10.0.1.230";
           ssh-eloquentiastudios = "ssh -i /home/esaiaswestberg/.ssh/eloquentiastudios -o IdentitiesOnly=yes opc@129.151.220.30";
           ssh-eloquentia = "ssh-eloquentiastudios";
-          ssh-ephirant = "ssh -i /home/esaiaswestberg/.ssh/ephirant -o IdentitiesOnly=yes root@10.0.1.215";
+          ssh-jake = "ssh -i /home/esaiaswestberg/.ssh/id_github -o IdentitiesOnly=yes jake@10.0.0.100";
       };
 
       history = {
@@ -37,6 +38,12 @@
         enable = true;
         plugins = [ "git" "direnv" ];
       };
+
+      initExtra = ''
+      	export ANDROID_HOME=$(dirname $(dirname $(readlink -f $(which adb))))
+	export ANDROID_SDK_ROOT=$ANDROID_HOME
+	export PATH=$PATH:/home/esaiaswestberg/go/bin
+      '';
       
       plugins = [
       	{

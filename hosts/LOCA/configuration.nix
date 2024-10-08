@@ -59,6 +59,11 @@
     };
   };
 
+  networking.firewall = {
+    enable = true;
+    allowedTCPPorts = [ 80 443 5173 ];
+  };
+
   userSettings = {
     name = "Esaias Westberg";
     username = "esaiaswestberg";
@@ -74,6 +79,12 @@
   ];
 
   programs.steam.enable = true;
+  programs.adb.enable = true;
+
+  environment.variables = {
+    ANDROID_HOME = "/home/esaiaswestberg/Android/Sdk";
+    ANDROID_SDK_ROOT = "/home/esaiaswestberg/Android/Sdk";
+  };
 
   fileSystems."/home/esaiaswestberg/Storage" = {
     device = "/dev/disk/by-uuid/29d01ccf-7621-4b5d-81af-e2308eb27f42";
