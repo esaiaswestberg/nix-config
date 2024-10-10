@@ -11,4 +11,6 @@ pkgs: [
   pkgs.android-studio
   pkgs.android-studio-tools
   pkgs.dart
+
+  pkgs.gccgo
 ]
