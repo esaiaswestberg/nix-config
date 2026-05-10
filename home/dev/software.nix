@@ -4,10 +4,7 @@
     alejandra
     bat
     cmake
-    direnv
     eza
-    fd
-    fzf
     gcc
     gnumake
     htop
