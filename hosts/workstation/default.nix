@@ -10,6 +10,7 @@
     ./hardware-configuration.nix
     ./luks.nix
     ../../modules/common.nix
+    ../../modules/gaming.nix
     ../../modules/security.nix
     ../../modules/desktop/cosmic.nix
     ../../modules/secrets.nix
