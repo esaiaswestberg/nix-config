@@ -1,42 +1,23 @@
-# SuperGamer1337's Nix-config
+# NixOS configuration
 
-A noob's journey to NixOS configuration.
-Contains the all the configurations files for my NixOS configurations.
+This repository is a starter NixOS flake for a single machine.
 
-## Uses
+## Layout
 
-The configuration currently uses these awesome tools (some may also be undocumented):
+- `flake.nix`: flake entrypoint and pinned inputs
+- `hosts/workstation`: host-specific configuration
+- `modules`: shared system modules
+- `home/dev`: Home Manager configuration for the default user
 
-- NixOS
-- Nix Flakes
-- Home Manager
-- Stylix
+## Current assumptions
 
-# Structure
+- Nix flakes are enabled
+- Home Manager is integrated into the NixOS configuration
+- COSMIC is the desktop target
+- LUKS is the intended storage model, but the host-specific disk details still need to be filled in for the target machine
+- `sops-nix` is wired in so encrypted secrets can be added later without changing the repo shape
 
-The structure of the configuration is as follows:
+## Next step
 
-```
-nix-config
-├── flake.nix # The main flake file
-├── themes # Contains the different themes available, as well as their resources (i.e. wallpapers)
-├── hosts
-│   ├── TEMPLATE # The template for used by the install script
-│   │   ├── configuration.nix # The configuration for the machine
-│   └── example-machine # An example machine
-│       ├── configuration.nix # The configuration for the machine
-│       ├── hardware-configuration.nix # The hardware configuration for the machine
-└── modules
-    ├── system # System level configuration modules
-    └── home # Home level configuration modules
-```
+On the target machine, replace the placeholder hardware and storage files with the generated hardware configuration and the real encrypted-root settings for that machine.
 
-Then there are various scripts and other files at the top level (i.e. install.sh) that do not directly relate to the configuration.
-
-## Installation
-
-If you want to install a new system, first use the normal NixOS installation then you can run the install script with the following command:
-
-```sh
-curl -o install.sh https://raw.githubusercontent.com/Supergamer1337/nix-config/master/install.sh && chmod 777 install.sh && sudo ./install.sh
-```
