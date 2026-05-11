@@ -7,6 +7,21 @@ PRIMARY_USER="esaiaswestberg"
 SECONDARY_USER="filippawestberg"
 TARGET_ROOT="/mnt"
 REPO_ROOT="${REPO_ROOT:-$(pwd)}"
+DRY_RUN=0
+
+usage() {
+  cat <<'EOF'
+Usage: scripts/bootstrap.sh [--dry-run]
+
+Run from the NixOS installer as root. By default this script partitions the
+target disk, writes the host files, creates encrypted secrets, and installs the
+loca system.
+
+Options:
+  -n, --dry-run   Print the planned actions and exit before making changes.
+  -h, --help      Show this help text.
+EOF
+}
 
 die() {
   printf 'error: %s\n' "$*" >&2
@@ -23,6 +38,11 @@ require_root() {
 
 require_repo_root() {
   [[ -f "$REPO_ROOT/flake.nix" ]] || die "REPO_ROOT must point at the nix-config repo root"
+}
+
+require_command() {
+  local command_name="$1"
+  command -v "$command_name" >/dev/null 2>&1 || die "missing required command: $command_name"
 }
 
 prompt() {
@@ -91,6 +111,43 @@ command_or_nix_shell() {
   fi
 }
 
+preflight_checks() {
+  require_root
+  require_repo_root
+  [[ -d "$REPO_ROOT/hosts/loca" ]] || die "missing host directory: $REPO_ROOT/hosts/loca"
+  [[ -d "$REPO_ROOT/secrets" ]] || die "missing secrets directory: $REPO_ROOT/secrets"
+  [[ -w "$REPO_ROOT/hosts/loca" ]] || die "host directory is not writable: $REPO_ROOT/hosts/loca"
+  [[ -w "$REPO_ROOT/secrets" ]] || die "secrets directory is not writable: $REPO_ROOT/secrets"
+  require_command mountpoint
+  if mountpoint -q "$TARGET_ROOT"; then
+    die "$TARGET_ROOT is already mounted; unmount it before running the bootstrap"
+  fi
+  require_command lsblk
+  require_command nix
+  require_command sgdisk
+  require_command parted
+  require_command partprobe
+  require_command udevadm
+  require_command mkfs.fat
+  require_command mkfs.ext4
+  require_command cryptsetup
+  require_command mount
+  require_command umount
+  require_command blkid
+  require_command shred
+}
+
+print_dry_run() {
+  log "Dry run only. Planned actions:"
+  log "  - verify the target disk and repo paths are ready"
+  log "  - partition the disk as GPT with EFI + LUKS root"
+  log "  - generate host hardware and LUKS files"
+  log "  - seed /var/lib/sops-nix/key.txt into the target system"
+  log "  - prompt for user passwords and secret values"
+  log "  - hash the passwords and encrypt secrets/loca.yaml"
+  log "  - install the NixOS configuration for loca"
+}
+
 partition_path() {
   local disk="$1"
   local number="$2"
@@ -129,13 +186,32 @@ cleanup() {
 
 trap cleanup EXIT
 
-require_root
-require_repo_root
+for arg in "$@"; do
+  case "$arg" in
+    -n|--dry-run)
+      DRY_RUN=1
+      ;;
+    -h|--help)
+      usage
+      exit 0
+      ;;
+    *)
+      die "unknown argument: $arg"
+      ;;
+  esac
+done
+
+preflight_checks
 
 log "Repository root: $REPO_ROOT"
 log "Target host: $HOST_NAME"
 log "Primary user: $PRIMARY_USER"
 log "Secondary user: $SECONDARY_USER"
+
+if (( DRY_RUN )); then
+  print_dry_run
+  exit 0
+fi
 
 disk="$(prompt "Target disk (for example /dev/nvme0n1)")"
 [[ -b "$disk" ]] || die "not a block device: $disk"
@@ -244,7 +320,7 @@ shred -u "$tmp_secrets"
 
 log "Running NixOS install"
 pushd "$REPO_ROOT" >/dev/null
-nixos-install --flake ".#${HOST_NAME}"
+command_or_nix_shell nixos-install-tools nixos-install --flake ".#${HOST_NAME}"
 popd >/dev/null
 
 log ""

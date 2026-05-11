@@ -145,3 +145,13 @@ To add or update a secret later:
 - Keep this file encrypted at rest.
 - Do not commit plaintext credentials.
 - The repository currently expects all host secrets to live in `secrets/loca.yaml`.
+
+## Recovery
+
+If a bootstrap run is interrupted before the secrets file is written:
+
+1. Confirm `/var/lib/sops-nix/key.txt` still exists on the target system.
+2. Re-run `sudo ./scripts/bootstrap.sh --dry-run` to confirm the repo layout is still usable.
+3. Re-run the full bootstrap to regenerate and re-encrypt `secrets/loca.yaml`.
+
+If the age key is lost, the encrypted secrets file must be regenerated with a new key and the repo rebuilt against that new key. Keep the private key backed up with the rest of the machine recovery material.
