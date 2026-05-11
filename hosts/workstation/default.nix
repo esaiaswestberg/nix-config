@@ -16,6 +16,7 @@
     ../../modules/input.nix
     ../../modules/shell.nix
     ../../modules/security.nix
+    ../../modules/vpn.nix
     ../../modules/desktop/cosmic.nix
     ../../modules/secrets.nix
     ../../modules/users.nix

@@ -24,6 +24,18 @@
         group = "root";
         mode = "0600";
       };
+
+      "tailscale/auth-key" = {
+        owner = "root";
+        group = "root";
+        mode = "0400";
+      };
+
+      "vpn/proton/env" = {
+        owner = "root";
+        group = "root";
+        mode = "0400";
+      };
     };
   };
 }
