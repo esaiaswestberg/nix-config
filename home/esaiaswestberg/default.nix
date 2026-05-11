@@ -1,10 +1,7 @@
 {
   imports = [
-    ./software.nix
-    ./gaming.nix
+    ../shared/default.nix
     ./browser.nix
-    ./terminal.nix
-    ./ssh.nix
   ];
 
   home.username = "esaiaswestberg";

@@ -8,8 +8,9 @@ This repository is the NixOS configuration for a single workstation named `loca`
 - `flake.lock`: pinned dependency versions
 - `hosts/loca`: machine-specific NixOS configuration
 - `modules`: shared system modules grouped by concern
-- `home/esaiaswestberg`: Home Manager configuration for the primary user
-- `home/filippawestberg`: Home Manager configuration for the second user
+- `home/shared`: Home Manager defaults shared by both users
+- `home/esaiaswestberg`: Home Manager overlay for the primary user
+- `home/filippawestberg`: Home Manager overlay for the second user
 - `secrets`: encrypted secrets and the bootstrap notes for them
 
 ## How the configuration is assembled
@@ -20,7 +21,8 @@ The split is intentional:
 
 - `hosts/loca` owns machine-specific state such as disk layout, boot configuration, and any host-only overrides
 - `modules` contains shared system behavior such as shell UX, networking, security, gaming, VPNs, Docker, and backups
-- `home/esaiaswestberg` and `home/filippawestberg` contain user-facing packages and terminal configuration that should follow the user rather than the machine
+- `home/shared` contains user-facing defaults that both accounts share
+- `home/esaiaswestberg` and `home/filippawestberg` contain the per-user overlays that differ between accounts
 - `secrets` holds the encrypted source file consumed by `sops-nix` plus the bootstrap guidance for creating it
 
 ## Module overview
@@ -41,17 +43,17 @@ The split is intentional:
 
 ## User environment
 
-`home/esaiaswestberg/default.nix` wires in five Home Manager modules:
+`home/shared/default.nix` wires in the shared Home Manager modules:
 
-- `home/esaiaswestberg/software.nix`: development tools and general-purpose CLI packages
-- `home/esaiaswestberg/gaming.nix`: user-facing gaming launchers and helpers
-- `home/esaiaswestberg/browser.nix`: Zen Browser and browser defaults
-- `home/esaiaswestberg/terminal.nix`: Alacritty and supporting clipboard/capture tools
-- `home/esaiaswestberg/ssh.nix`: SSH host aliases and the default client identity file
+- `home/shared/software.nix`: development tools and general-purpose CLI packages
+- `home/shared/gaming.nix`: user-facing gaming launchers and helpers
+- `home/shared/browser.nix`: shared MIME handling for browser defaults
+- `home/shared/terminal.nix`: Alacritty and supporting clipboard/capture tools
+- `home/shared/ssh.nix`: SSH host aliases and the default client identity file
 
-`home/filippawestberg/default.nix` reuses the same baseline modules for the second account, with `home/filippawestberg/browser.nix` swapping in Google Chrome.
+`home/esaiaswestberg/default.nix` and `home/filippawestberg/default.nix` add the per-user browser choice on top of the shared base.
 
-Both users get the same shell, SSH alias, and desktop-facing baseline, while the browser choice is user-specific.
+Both users get the same shell, SSH alias, terminal, gaming, and desktop-facing baseline, while the browser choice is user-specific.
 
 ## Current assumptions
 
