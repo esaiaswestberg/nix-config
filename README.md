@@ -12,6 +12,7 @@ This repository is the NixOS configuration for a single workstation named `loca`
 - `home/esaiaswestberg`: Home Manager overlay for the primary user
 - `home/filippawestberg`: Home Manager overlay for the second user
 - `secrets`: encrypted secrets and the bootstrap notes for them
+- `scripts`: helper scripts, including the interactive bootstrap runner
 
 ## How the configuration is assembled
 
@@ -79,6 +80,8 @@ The repository still contains placeholder host files:
 - `secrets/loca.yaml`
 
 Those placeholders are intentional. They keep the repo shape stable while the real machine-specific disk and secret values are filled in later.
+
+For a from-scratch install, use [`scripts/bootstrap.sh`](scripts/bootstrap.sh). It handles the disk layout, host hardware files, age key bootstrapping, and encrypted secret creation interactively. The manual steps in the docs remain as the fallback path.
 
 ## Setup guide
 

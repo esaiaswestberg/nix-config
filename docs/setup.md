@@ -2,6 +2,8 @@
 
 This is the exact bootstrap flow for the workstation named `loca`.
 
+Prefer [`scripts/bootstrap.sh`](../scripts/bootstrap.sh) for a new machine. It asks for the required values, lays out the disk, writes the host files, and encrypts `secrets/loca.yaml` in one run. Keep the manual steps below as the fallback if you need to do the process by hand or debug one stage at a time.
+
 ## 0. Start from the installer
 
 Boot the NixOS installer on the target machine and get a shell with root access.

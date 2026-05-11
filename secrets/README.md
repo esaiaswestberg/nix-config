@@ -2,6 +2,8 @@
 
 This directory holds the encrypted secrets consumed by `sops-nix` on `loca`.
 
+For a fresh install, `scripts/bootstrap.sh` can prompt for the secret values, hash the user passwords, and encrypt `secrets/loca.yaml` in one pass. The manual steps below remain the fallback path and the reference for later edits.
+
 ## Files
 
 - `secrets/loca.yaml`: encrypted secret source file for the host
