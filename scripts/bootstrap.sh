@@ -87,6 +87,10 @@ prompt_multiline() {
   printf '%s' "${content%$'\n'}"
 }
 
+section() {
+  printf '\n== %s ==\n' "$1"
+}
+
 confirm_overwrite() {
   local path="$1"
   if [[ -e "$path" ]]; then
@@ -109,6 +113,90 @@ command_or_nix_shell() {
   else
     nix shell "nixpkgs#$package" -c "$@"
   fi
+}
+
+list_disks() {
+  lsblk -dnpo NAME,SIZE,MODEL,TYPE | awk '$4 == "disk" {
+    model = ""
+    for (i = 3; i <= NF - 1; i++) {
+      model = model $i
+      if (i < NF - 1) model = model " "
+    }
+    print $1 "\t" $2 "\t" model
+  }'
+}
+
+select_disk() {
+  local disk_lines=()
+  local line
+  while IFS= read -r line; do
+    [[ -n "$line" ]] || continue
+    disk_lines+=("$line")
+  done < <(list_disks)
+
+  [[ ${#disk_lines[@]} -gt 0 ]] || die "no disks found"
+
+  if command -v fzf >/dev/null 2>&1; then
+    local choice
+    choice="$(printf '%s\n' "${disk_lines[@]}" | fzf --prompt="Select target disk> " --with-nth=1,2,3 --delimiter=$'\t')" || die "no disk selected"
+    printf '%s' "${choice%%$'\t'*}"
+    return 0
+  fi
+
+  log "Available disks:"
+  local i=1
+  local path size model
+  for line in "${disk_lines[@]}"; do
+    IFS=$'\t' read -r path size model <<<"$line"
+    printf '  %d) %s  %s  %s\n' "$i" "$path" "$size" "${model:-unknown}"
+    i=$((i + 1))
+  done
+
+  local selection
+  while :; do
+    selection="$(prompt "Select disk number")"
+    [[ "$selection" =~ ^[0-9]+$ ]] || { log "Enter a number from the list."; continue; }
+    (( selection >= 1 && selection < i )) || { log "Enter a number from the list."; continue; }
+    IFS=$'\t' read -r path size model <<<"${disk_lines[$((selection - 1))]}"
+    printf '%s' "$path"
+    return 0
+  done
+}
+
+show_bootstrap_summary() {
+  local disk="$1"
+  local boot_part="$2"
+  local root_part="$3"
+  section "Review"
+  log "Target disk: $disk"
+  log "Boot partition: $boot_part"
+  log "Root partition: $root_part"
+  log "Host: $HOST_NAME"
+  log "Users: $PRIMARY_USER, $SECONDARY_USER"
+  log "Secrets file: $REPO_ROOT/secrets/loca.yaml"
+  log "Host files:"
+  log "  - $REPO_ROOT/hosts/loca/hardware-configuration.nix"
+  log "  - $REPO_ROOT/hosts/loca/luks.nix"
+}
+
+collect_secret_values() {
+  section "Local accounts"
+  luks_passphrase="$(prompt_secret_confirm "LUKS passphrase")"
+  primary_password="$(prompt_secret_confirm "Password for $PRIMARY_USER")"
+  secondary_password="$(prompt_secret_confirm "Password for $SECONDARY_USER")"
+
+  section "Backup"
+  restic_repository="$(prompt "Restic repository URL" "sftp:user@backup.example.com:/srv/restic/loca")"
+  restic_password="$(prompt_secret_confirm "Restic repository password")"
+  backup_ssh_key="$(prompt_multiline "Paste the backup SSH private key")"
+
+  section "VPN"
+  tailscale_auth_key="$(prompt_secret_confirm "Tailscale auth key")"
+  proton_private_key="$(prompt_secret_confirm "ProtonVPN WireGuard private key")"
+  proton_public_key="$(prompt_secret_confirm "ProtonVPN WireGuard public key")"
+  proton_endpoint="$(prompt "ProtonVPN WireGuard endpoint")"
+  proton_ipv4_address="$(prompt "ProtonVPN IPv4 address")"
+  proton_dns="$(prompt "ProtonVPN DNS server")"
 }
 
 preflight_checks() {
@@ -213,31 +301,21 @@ if (( DRY_RUN )); then
   exit 0
 fi
 
-disk="$(prompt "Target disk (for example /dev/nvme0n1)")"
+section "Disk selection"
+disk="$(select_disk)"
 [[ -b "$disk" ]] || die "not a block device: $disk"
 
 log ""
 log "Current block devices:"
 lsblk -dpno NAME,SIZE,MODEL "$disk" || true
 
-confirm "This will erase $disk and create a new GPT + LUKS layout"
-
-luks_passphrase="$(prompt_secret_confirm "LUKS passphrase")"
-primary_password="$(prompt_secret_confirm "Password for $PRIMARY_USER")"
-secondary_password="$(prompt_secret_confirm "Password for $SECONDARY_USER")"
-
-restic_repository="$(prompt "Restic repository URL" "sftp:user@backup.example.com:/srv/restic/loca")"
-restic_password="$(prompt_secret_confirm "Restic repository password")"
-backup_ssh_key="$(prompt_multiline "Paste the backup SSH private key")"
-tailscale_auth_key="$(prompt_secret_confirm "Tailscale auth key")"
-proton_private_key="$(prompt_secret_confirm "ProtonVPN WireGuard private key")"
-proton_public_key="$(prompt_secret_confirm "ProtonVPN WireGuard public key")"
-proton_endpoint="$(prompt "ProtonVPN WireGuard endpoint")"
-proton_ipv4_address="$(prompt "ProtonVPN IPv4 address")"
-proton_dns="$(prompt "ProtonVPN DNS server")"
+collect_secret_values
 
 boot_part="$(partition_path "$disk" 1)"
 root_part="$(partition_path "$disk" 2)"
+
+show_bootstrap_summary "$disk" "$boot_part" "$root_part"
+confirm "This will erase $disk and create a new GPT + LUKS layout"
 
 log ""
 log "Partitioning $disk"

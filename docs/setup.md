@@ -2,7 +2,7 @@
 
 This is the exact bootstrap flow for the workstation named `loca`.
 
-Prefer [`scripts/bootstrap.sh`](../scripts/bootstrap.sh) for a new machine. It asks for the required values, lays out the disk, writes the host files, and encrypts `secrets/loca.yaml` in one run. Keep the manual steps below as the fallback if you need to do the process by hand or debug one stage at a time.
+Prefer [`scripts/bootstrap.sh`](../scripts/bootstrap.sh) for a new machine. It now shows the available disks in a picker, groups the secret prompts into sections, and gives you a final review screen before any destructive change. Keep the manual steps below as the fallback if you need to do the process by hand or debug one stage at a time.
 
 You can preview the bootstrap with:
 
@@ -11,6 +11,13 @@ sudo ./scripts/bootstrap.sh --dry-run
 ```
 
 If the script aborts after mounting or partitioning, unmount `/mnt`, close `cryptroot` if it is still open, and run the dry run again before retrying the full install.
+
+During the full run, the script will:
+
+- show all available disks with their size and model
+- let you pick one with `fzf` if installed, or a numbered menu otherwise
+- collect local account, backup, and VPN secrets in separate sections
+- print a final summary before erasing anything
 
 ## 0. Start from the installer
 
