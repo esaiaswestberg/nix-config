@@ -27,12 +27,13 @@ The split is intentional:
 - `modules/common.nix`: base system defaults, Nix settings, NetworkManager, firmware, and the core package set
 - `modules/security.nix`: firewall and SSH policy
 - `modules/users.nix`: the normal user account and its default groups
-- `modules/shell.nix`: `zsh`, `tmux`, `fzf`, `zoxide`, `direnv`, `starship`, and shell ergonomics
+- `modules/shell.nix`: `zsh`, `oh-my-zsh`, Powerlevel10k, `tmux`, `fzf`, `zoxide`, `direnv`, and shell ergonomics
 - `modules/input.nix`: Swedish keyboard layout and pointer/touchpad defaults
 - `modules/desktop/cosmic.nix`: COSMIC desktop and greeter wiring
 - `modules/desktop/ux.nix`: portals, fonts, Qt styling, and Wayland session defaults
 - `modules/gaming.nix`: Steam, Gamemode, AppImage support, and graphics-related gaming flags
 - `modules/docker.nix`: Docker daemon, Compose, Buildx, and user access
+- `modules/ssh-client-keys.nix`: boot-time generation of the default SSH client key
 - `modules/vpn.nix`: Tailscale autoconnect and ProtonVPN manual profiles
 - `modules/backup.nix`: restic backups for system and home data
 - `modules/secrets.nix`: `sops-nix` bootstrap and secret declarations
@@ -44,6 +45,7 @@ The split is intentional:
 - `home/esaiaswestberg/software.nix`: development tools and general-purpose CLI packages
 - `home/esaiaswestberg/gaming.nix`: user-facing gaming launchers and helpers
 - `home/esaiaswestberg/terminal.nix`: Alacritty and supporting clipboard/capture tools
+- `home/esaiaswestberg/ssh.nix`: SSH host aliases and the default client identity file
 
 ## Current assumptions
 

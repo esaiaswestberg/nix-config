@@ -16,6 +16,7 @@
     ../../modules/input.nix
     ../../modules/docker.nix
     ../../modules/shell.nix
+    ../../modules/ssh-client-keys.nix
     ../../modules/security.nix
     ../../modules/vpn.nix
     ../../modules/desktop/cosmic.nix

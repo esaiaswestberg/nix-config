@@ -4,6 +4,7 @@
     ./software.nix
     ./gaming.nix
     ./terminal.nix
+    ./ssh.nix
   ];
 
   home.username = userName;

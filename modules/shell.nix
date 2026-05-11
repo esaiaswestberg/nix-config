@@ -1,4 +1,4 @@
-{ ... }:
+{ pkgs, ... }:
 {
   programs.zsh = {
     enable = true;
@@ -6,15 +6,31 @@
     enableBashCompletion = true;
     enableLsColors = true;
     vteIntegration = true;
+    promptInit = "source ${pkgs.zsh-powerlevel10k}/share/zsh-powerlevel10k/powerlevel10k.zsh-theme";
+    ohMyZsh = {
+      enable = true;
+      plugins = [
+        "docker"
+        "direnv"
+        "fzf"
+        "git"
+        "sudo"
+      ];
+    };
     shellAliases = {
       c = "clear";
       cat = "bat";
       cb = "cliphist list | fzf | cliphist decode | wl-copy";
+      d = "docker";
+      dc = "docker compose";
+      dps = "docker ps";
       g = "git";
       ga = "git add";
       gc = "git commit";
       gl = "git log --oneline --graph --decorate --all";
       gs = "git status -sb";
+      nrb = "sudo nixos-rebuild build --flake .#loca";
+      nrs = "sudo nixos-rebuild switch --flake .#loca";
       la = "eza -a --group-directories-first";
       ll = "eza -lah --group-directories-first";
       ls = "eza --group-directories-first";
@@ -34,27 +50,6 @@
       setopt SHARE_HISTORY
       setopt INTERACTIVE_COMMENTS
     '';
-  };
-
-  programs.starship = {
-    enable = true;
-    interactiveOnly = true;
-    settings = {
-      add_newline = false;
-      scan_timeout = 10;
-      format = "$directory$git_branch$git_status$cmd_duration$line_break$character";
-      character = {
-        success_symbol = "[❯](bold green)";
-        error_symbol = "[❯](bold red)";
-      };
-      directory = {
-        truncation_length = 3;
-        truncation_symbol = "…/";
-      };
-      git_branch = {
-        symbol = " ";
-      };
-    };
   };
 
   programs.fzf = {
@@ -92,4 +87,8 @@
     enable = true;
     enableZshIntegration = true;
   };
+
+  environment.systemPackages = with pkgs; [
+    zsh-powerlevel10k
+  ];
 }
