@@ -2,7 +2,7 @@
 
 This directory is reserved for encrypted secrets managed by `sops-nix`.
 
-The workstation currently expects `secrets/workstation.yaml` to provide:
+The `loca` host currently expects `secrets/loca.yaml` to provide:
 
 - `backup/restic/repository`
 - `backup/restic/password`

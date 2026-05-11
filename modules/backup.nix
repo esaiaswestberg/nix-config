@@ -1,9 +1,9 @@
-{ userName, config, ... }:
+{ hostName, userName, config, ... }:
 let
   homeDir = "/home/${userName}";
 in
 {
-  services.restic.backups.workstation = {
+  services.restic.backups.${hostName} = {
     initialize = true;
     paths = [
       "/etc/nixos"

@@ -1,6 +1,6 @@
 # Clean System Setup
 
-This guide describes how to bring the workstation up on a clean NixOS installation.
+This guide describes how to bring the workstation named `loca` up on a clean NixOS installation.
 
 ## 1. Install NixOS
 
@@ -10,12 +10,12 @@ The key requirement is that the machine has the right hardware and storage detai
 
 ## 2. Fill in the host hardware files
 
-Replace the placeholder files in `hosts/workstation`:
+Replace the placeholder files in `hosts/loca`:
 
 - `hardware-configuration.nix`
 - `luks.nix`
 
-Use the generated hardware configuration from the installer or from `nixos-generate-config` on the target machine. Populate the root filesystem and encrypted disk configuration with the real device UUIDs and mount points for the workstation.
+Use the generated hardware configuration from the installer or from `nixos-generate-config` on the target machine. Populate the root filesystem and encrypted disk configuration with the real device UUIDs and mount points for `loca`.
 
 The repository will not evaluate cleanly until the root filesystem is defined.
 
@@ -35,7 +35,7 @@ age-keygen -y /var/lib/sops-nix/key.txt
 
 ## 4. Encrypt the secrets
 
-The repository expects `secrets/workstation.yaml` to contain encrypted entries for:
+The repository expects `secrets/loca.yaml` to contain encrypted entries for:
 
 - `backup/restic/repository`
 - `backup/restic/password`
@@ -59,18 +59,18 @@ The restic entries are:
 
 The Tailscale key is the auth key used for automatic boot-time registration.
 
-## 5. Rebuild the workstation
+## 5. Rebuild `loca`
 
 After the secrets are in place, rebuild the system:
 
 ```bash
-sudo nixos-rebuild switch --flake .#workstation
+sudo nixos-rebuild switch --flake .#loca
 ```
 
 If you are iterating on the config, use:
 
 ```bash
-sudo nixos-rebuild build --flake .#workstation
+sudo nixos-rebuild build --flake .#loca
 ```
 
 before switching.
@@ -80,7 +80,7 @@ before switching.
 After the rebuild, verify the expected services and tools:
 
 - `tailscale status`
-- `systemctl status restic-backups-workstation.service`
+- `systemctl status restic-backups-loca.service`
 - `docker info`
 - `docker compose version`
 - `docker buildx version`
@@ -91,7 +91,7 @@ ProtonVPN should appear as a NetworkManager profile but stay disconnected until 
 
 - Tailscale should auto-connect at boot once the auth key is present.
 - ProtonVPN should stay manual-only.
-- Docker should be available to the `dev` user without `sudo`.
+- Docker should be available to the `esaiaswestberg` user without `sudo`.
 - Backups should run daily through the restic timer.
 
-If you need to change secrets later, edit the encrypted `secrets/workstation.yaml` and re-run the rebuild on the target machine.
+If you need to change secrets later, edit the encrypted `secrets/loca.yaml` and re-run the rebuild on the target machine.

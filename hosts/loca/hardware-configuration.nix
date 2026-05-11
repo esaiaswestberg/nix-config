@@ -4,4 +4,3 @@
   # target machine after installing NixOS.
   imports = [ ];
 }
-

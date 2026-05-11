@@ -1,5 +1,5 @@
 {
-  description = "NixOS configuration for a COSMIC workstation";
+  description = "NixOS configuration for the COSMIC workstation loca";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
@@ -18,8 +18,8 @@
   outputs = inputs@{ self, nixpkgs, home-manager, sops-nix, ... }:
     let
       system = "x86_64-linux";
-      hostName = "workstation";
-      userName = "dev";
+      hostName = "loca";
+      userName = "esaiaswestberg";
     in
     {
       nixosConfigurations.${hostName} = nixpkgs.lib.nixosSystem {
@@ -28,11 +28,10 @@
           inherit inputs hostName userName;
         };
         modules = [
-          ./hosts/workstation
+          ./hosts/loca
           home-manager.nixosModules.home-manager
           sops-nix.nixosModules.sops
         ];
       };
     };
 }
-

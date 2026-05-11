@@ -3,7 +3,7 @@
   sops = {
     age.generateKey = true;
     age.keyFile = "/var/lib/sops-nix/key.txt";
-    defaultSopsFile = ../secrets/workstation.yaml;
+    defaultSopsFile = ../secrets/loca.yaml;
 
     secrets = {
       "backup/restic/repository" = {
