@@ -2,6 +2,7 @@
   imports = [
     ../esaiaswestberg/software.nix
     ../esaiaswestberg/gaming.nix
+    ./browser.nix
     ../esaiaswestberg/terminal.nix
     ../esaiaswestberg/ssh.nix
   ];

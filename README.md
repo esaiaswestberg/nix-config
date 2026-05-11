@@ -41,16 +41,17 @@ The split is intentional:
 
 ## User environment
 
-`home/esaiaswestberg/default.nix` wires in four Home Manager modules:
+`home/esaiaswestberg/default.nix` wires in five Home Manager modules:
 
 - `home/esaiaswestberg/software.nix`: development tools and general-purpose CLI packages
 - `home/esaiaswestberg/gaming.nix`: user-facing gaming launchers and helpers
+- `home/esaiaswestberg/browser.nix`: Zen Browser and browser defaults
 - `home/esaiaswestberg/terminal.nix`: Alacritty and supporting clipboard/capture tools
 - `home/esaiaswestberg/ssh.nix`: SSH host aliases and the default client identity file
 
-`home/filippawestberg/default.nix` reuses the same baseline modules for the second account.
+`home/filippawestberg/default.nix` reuses the same baseline modules for the second account, with `home/filippawestberg/browser.nix` swapping in Google Chrome.
 
-Both users get the same shell, terminal, SSH alias, and desktop-facing baseline.
+Both users get the same shell, SSH alias, and desktop-facing baseline, while the browser choice is user-specific.
 
 ## Current assumptions
 
@@ -64,6 +65,7 @@ Both users get the same shell, terminal, SSH alias, and desktop-facing baseline.
 - both local users get encrypted password hashes from `sops-nix`
 - both local users get a boot-time generated SSH client key if one is missing
 - `filippawestberg` is a standard user without sudo access
+- `esaiaswestberg` uses Zen Browser and `filippawestberg` uses Google Chrome as their default browser
 - LUKS is the intended storage model, but the host-specific disk layout still needs to be filled in on the target machine
 
 ## Bootstrap status
