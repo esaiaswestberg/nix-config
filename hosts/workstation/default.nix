@@ -10,6 +10,7 @@
     ./hardware-configuration.nix
     ./luks.nix
     ../../modules/common.nix
+    ../../modules/backup.nix
     ../../modules/desktop/ux.nix
     ../../modules/gaming.nix
     ../../modules/input.nix
