@@ -14,6 +14,7 @@
     ../../modules/desktop/ux.nix
     ../../modules/gaming.nix
     ../../modules/input.nix
+    ../../modules/docker.nix
     ../../modules/shell.nix
     ../../modules/security.nix
     ../../modules/vpn.nix
