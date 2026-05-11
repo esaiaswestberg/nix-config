@@ -25,6 +25,18 @@
         mode = "0600";
       };
 
+      "users/esaiaswestberg/password-hash" = {
+        owner = "root";
+        group = "root";
+        mode = "0400";
+      };
+
+      "users/filippawestberg/password-hash" = {
+        owner = "root";
+        group = "root";
+        mode = "0400";
+      };
+
       "tailscale/auth-key" = {
         owner = "root";
         group = "root";

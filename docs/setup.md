@@ -89,6 +89,8 @@ The repository expects `secrets/loca.yaml` to be encrypted for the machine key a
 - `backup/restic/repository`
 - `backup/restic/password`
 - `backup/restic/ssh-key`
+- `users/esaiaswestberg/password-hash`
+- `users/filippawestberg/password-hash`
 - `tailscale/auth-key`
 - `vpn/proton/env`
 
@@ -102,6 +104,8 @@ backup/restic/ssh-key: |
   -----BEGIN OPENSSH PRIVATE KEY-----
   replace-me
   -----END OPENSSH PRIVATE KEY-----
+users/esaiaswestberg/password-hash: "$y$j9T$replace-me"
+users/filippawestberg/password-hash: "$y$j9T$replace-me"
 tailscale/auth-key: tskey-auth-replace-me
 vpn/proton/env: |
   PROTONVPN_WIREGUARD_PRIVATE_KEY=replace-me
@@ -132,6 +136,8 @@ Populate these fields:
 - `backup/restic/repository`: the remote restic repository URL, for example an SFTP path
 - `backup/restic/password`: the restic repository password
 - `backup/restic/ssh-key`: the private SSH key used by root to reach the backup server
+- `users/esaiaswestberg/password-hash`: the hashed password for the primary admin user
+- `users/filippawestberg/password-hash`: the hashed password for the second standard user
 - `tailscale/auth-key`: the Tailscale preauth key used for boot-time login
 - `vpn/proton/env`: an encrypted environment file containing ProtonVPN WireGuard settings
 
@@ -198,17 +204,20 @@ docker ps
 docker compose up
 ```
 
-The first login user is `esaiaswestberg` and the initial password in the config is `nixos`. Change it after the first successful login:
+The repository now expects both local users to use encrypted password hashes instead of plaintext bootstrap passwords, so set the hashes in `secrets/loca.yaml` before the first switch that creates the accounts.
+
+The two users on the machine are:
+
+- `esaiaswestberg`: admin user with `wheel`
+- `filippawestberg`: standard user without admin access
+
+To generate the password hashes, run `mkpasswd` from a disposable shell and paste the resulting hashes into the secret file:
 
 ```bash
-passwd
+nix shell nixpkgs#whois -c mkpasswd -m yescrypt
 ```
 
-Or from another admin shell:
-
-```bash
-sudo passwd esaiaswestberg
-```
+Run it once for each account, then place the two hash strings into `users/esaiaswestberg/password-hash` and `users/filippawestberg/password-hash` before encrypting `secrets/loca.yaml`.
 
 To rotate a secret:
 

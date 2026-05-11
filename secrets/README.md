@@ -55,6 +55,18 @@ The module writes this secret to:
 
 That key should be allowed to log in to the backup server without prompting.
 
+### `users/esaiaswestberg/password-hash`
+
+The hashed password for the primary admin user.
+
+This should be a standard Linux password hash string, for example a hash generated with `mkpasswd` or another password hashing tool. The file should contain the hash only, not plaintext.
+
+### `users/filippawestberg/password-hash`
+
+The hashed password for the second standard user.
+
+This uses the same format as the primary user hash, but it can be a different password.
+
 ### `tailscale/auth-key`
 
 The Tailscale preauth key.
@@ -88,6 +100,8 @@ backup/restic/ssh-key: |
   -----BEGIN OPENSSH PRIVATE KEY-----
   replace-me
   -----END OPENSSH PRIVATE KEY-----
+users/esaiaswestberg/password-hash: "$y$j9T$replace-me"
+users/filippawestberg/password-hash: "$y$j9T$replace-me"
 tailscale/auth-key: tskey-auth-replace-me
 vpn/proton/env: |
   PROTONVPN_WIREGUARD_PRIVATE_KEY=replace-me
@@ -122,7 +136,7 @@ To add or update a secret later:
 3. Run the first `nixos-rebuild switch`.
 4. Read `/var/lib/sops-nix/key.txt`.
 5. Encrypt `secrets/loca.yaml` to that key.
-6. Rebuild again so the secrets are available to `restic`, `tailscale`, and `NetworkManager`.
+6. Rebuild again so the secrets are available to `restic`, the two local users, `tailscale`, and `NetworkManager`.
 
 ## Notes
 

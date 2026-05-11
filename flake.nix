@@ -20,12 +20,13 @@
       system = "x86_64-linux";
       hostName = "loca";
       userName = "esaiaswestberg";
+      secondaryUserName = "filippawestberg";
     in
     {
       nixosConfigurations.${hostName} = nixpkgs.lib.nixosSystem {
         inherit system;
         specialArgs = {
-          inherit inputs hostName userName;
+          inherit inputs hostName userName secondaryUserName;
         };
         modules = [
           ./hosts/loca

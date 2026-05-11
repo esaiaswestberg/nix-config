@@ -3,6 +3,7 @@
 , inputs
 , hostName
 , userName
+, secondaryUserName
 , ...
 }:
 {
@@ -33,9 +34,10 @@
     useGlobalPkgs = true;
     useUserPackages = true;
     extraSpecialArgs = {
-      inherit inputs hostName userName;
+      inherit inputs hostName userName secondaryUserName;
     };
     users.${userName} = import ../../home/${userName};
+    users.${secondaryUserName} = import ../../home/${secondaryUserName};
   };
 
   system.stateVersion = "25.11";

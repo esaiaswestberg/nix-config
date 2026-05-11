@@ -1,4 +1,3 @@
-{ userName, ... }:
 {
   imports = [
     ./software.nix
@@ -7,7 +6,7 @@
     ./ssh.nix
   ];
 
-  home.username = userName;
-  home.homeDirectory = "/home/${userName}";
+  home.username = "esaiaswestberg";
+  home.homeDirectory = "/home/esaiaswestberg";
   home.stateVersion = "25.11";
 }
