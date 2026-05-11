@@ -1,12 +1,29 @@
 # Clean System Setup
 
-This guide describes how to bring the workstation named `loca` up on a clean NixOS installation.
+This is the exact bootstrap flow for the workstation named `loca`.
 
-## 1. Install NixOS
+## 0. Start from the installer
 
-Start from a normal NixOS installation on the target machine.
+Boot the NixOS installer on the target machine and get a shell with root access.
 
-The key requirement is that the machine has the right hardware and storage details available before this repository can evaluate fully.
+Before this repository can evaluate cleanly, you need the real disk layout and the encrypted secrets file for the machine.
+
+## 1. Identify the disks and mount points
+
+List the block devices and filesystems:
+
+```bash
+lsblk -f
+sudo blkid
+```
+
+If the root or boot disks are not obvious, inspect them before editing anything else.
+
+You are looking for:
+
+- the EFI system partition
+- the root filesystem
+- the encrypted partition, if the machine uses LUKS
 
 ## 2. Fill in the host hardware files
 
@@ -15,27 +32,59 @@ Replace the placeholder files in `hosts/loca`:
 - `hardware-configuration.nix`
 - `luks.nix`
 
-Use the generated hardware configuration from the installer or from `nixos-generate-config` on the target machine. Populate the root filesystem and encrypted disk configuration with the real device UUIDs and mount points for `loca`.
+If you are installing from the live system, run the generator and copy the result into the repo:
 
-The repository will not evaluate cleanly until the root filesystem is defined.
+```bash
+sudo nixos-generate-config
+cp /etc/nixos/hardware-configuration.nix <repo-root>/hosts/loca/hardware-configuration.nix
+```
 
-## 3. Rebuild once to bootstrap `sops-nix`
+If the repo is mounted somewhere else, copy it there instead.
 
-After the hardware and disk configuration is correct, run a first rebuild on the target machine. That initial activation creates the age key used by `sops-nix` at:
+Then edit `hosts/loca/luks.nix` so it contains the real disk UUIDs and mount targets for the encrypted storage on `loca`.
+
+The repository will not evaluate until the root filesystem is defined in the host config.
+
+If you want to sanity-check the host files before the first switch, run:
+
+```bash
+cd <repo-root>
+nix flake check
+```
+
+## 3. Do the first rebuild
+
+Once the hardware files are in place, run the first rebuild from the repo root:
+
+```bash
+cd <repo-root>
+sudo nixos-rebuild switch --flake .#loca
+```
+
+You can use a build-only pass first if you want to confirm evaluation before switching:
+
+```bash
+cd <repo-root>
+sudo nixos-rebuild build --flake .#loca
+```
+
+The first successful activation creates the `sops-nix` age key at:
 
 ```bash
 /var/lib/sops-nix/key.txt
 ```
 
-Extract the public key with:
+Export the public key from that file:
 
 ```bash
-age-keygen -y /var/lib/sops-nix/key.txt
+sudo age-keygen -y /var/lib/sops-nix/key.txt
 ```
+
+Keep the resulting public key. You will use it to encrypt `secrets/loca.yaml`.
 
 ## 4. Encrypt the secrets
 
-The repository expects `secrets/loca.yaml` to contain encrypted entries for:
+The repository expects `secrets/loca.yaml` to be encrypted for the machine key and to contain these secret paths:
 
 - `backup/restic/repository`
 - `backup/restic/password`
@@ -43,7 +92,50 @@ The repository expects `secrets/loca.yaml` to contain encrypted entries for:
 - `tailscale/auth-key`
 - `vpn/proton/env`
 
-The ProtonVPN file is an encrypted environment file containing:
+Create a temporary plaintext file with the values:
+
+```bash
+cat > /tmp/loca.secrets.yaml <<'EOF'
+backup/restic/repository: sftp:user@backup.example.com:/srv/restic/loca
+backup/restic/password: replace-me
+backup/restic/ssh-key: |
+  -----BEGIN OPENSSH PRIVATE KEY-----
+  replace-me
+  -----END OPENSSH PRIVATE KEY-----
+tailscale/auth-key: tskey-auth-replace-me
+vpn/proton/env: |
+  PROTONVPN_WIREGUARD_PRIVATE_KEY=replace-me
+  PROTONVPN_WIREGUARD_PUBLIC_KEY=replace-me
+  PROTONVPN_WIREGUARD_ENDPOINT=replace-me
+  PROTONVPN_IPV4_ADDRESS=replace-me
+  PROTONVPN_DNS=replace-me
+EOF
+```
+
+Then encrypt it to the public age key you extracted earlier:
+
+```bash
+AGE_PUBLIC_KEY="$(sudo age-keygen -y /var/lib/sops-nix/key.txt)"
+sops --encrypt --age "$AGE_PUBLIC_KEY" /tmp/loca.secrets.yaml > <repo-root>/secrets/loca.yaml
+rm /tmp/loca.secrets.yaml
+```
+
+If you need to edit the encrypted file later on the machine itself, use the private key on disk:
+
+```bash
+cd <repo-root>
+sudo env SOPS_AGE_KEY_FILE=/var/lib/sops-nix/key.txt sops secrets/loca.yaml
+```
+
+Populate these fields:
+
+- `backup/restic/repository`: the remote restic repository URL, for example an SFTP path
+- `backup/restic/password`: the restic repository password
+- `backup/restic/ssh-key`: the private SSH key used by root to reach the backup server
+- `tailscale/auth-key`: the Tailscale preauth key used for boot-time login
+- `vpn/proton/env`: an encrypted environment file containing ProtonVPN WireGuard settings
+
+The ProtonVPN environment file must provide:
 
 - `PROTONVPN_WIREGUARD_PRIVATE_KEY`
 - `PROTONVPN_WIREGUARD_PUBLIC_KEY`
@@ -51,47 +143,78 @@ The ProtonVPN file is an encrypted environment file containing:
 - `PROTONVPN_IPV4_ADDRESS`
 - `PROTONVPN_DNS`
 
-The restic entries are:
+## 5. Rebuild after secrets are in place
 
-- the remote repository URL
-- the repository password
-- the SSH private key used to reach the backup host
-
-The Tailscale key is the auth key used for automatic boot-time registration.
-
-## 5. Rebuild `loca`
-
-After the secrets are in place, rebuild the system:
+Run the switch again so the decrypted secrets are written and the services can come up:
 
 ```bash
+cd <repo-root>
 sudo nixos-rebuild switch --flake .#loca
 ```
 
-If you are iterating on the config, use:
+If you are changing only one file and want to check evaluation first:
 
 ```bash
+cd <repo-root>
 sudo nixos-rebuild build --flake .#loca
 ```
 
-before switching.
+## 6. Verify the machine
 
-## 6. Verify the major services
+Check the core services and profiles:
 
-After the rebuild, verify the expected services and tools:
+```bash
+tailscale status
+systemctl status restic-backups-loca.service
+docker info
+docker compose version
+docker buildx version
+nmcli connection show --active
+```
 
-- `tailscale status`
-- `systemctl status restic-backups-loca.service`
-- `docker info`
-- `docker compose version`
-- `docker buildx version`
+What to expect:
 
-ProtonVPN should appear as a NetworkManager profile but stay disconnected until you enable it manually.
+- Tailscale should be connected automatically
+- ProtonVPN should exist as a NetworkManager profile named `ProtonVPN`, but it should not autoconnect
+- Docker should be available to the `esaiaswestberg` user without `sudo`
+- Restic should be wired to run from `restic-backups-loca.timer`
 
-## 7. Day-to-day operation
+If you want to inspect the timer:
 
-- Tailscale should auto-connect at boot once the auth key is present.
-- ProtonVPN should stay manual-only.
-- Docker should be available to the `esaiaswestberg` user without `sudo`.
-- Backups should run daily through the restic timer.
+```bash
+systemctl status restic-backups-loca.timer
+```
 
-If you need to change secrets later, edit the encrypted `secrets/loca.yaml` and re-run the rebuild on the target machine.
+## 7. Day-to-day commands
+
+Use these commands after the machine is configured:
+
+```bash
+sudo nixos-rebuild switch --flake .#loca
+sudo env SOPS_AGE_KEY_FILE=/var/lib/sops-nix/key.txt sops secrets/loca.yaml
+tailscale status
+systemctl status restic-backups-loca.service
+docker ps
+docker compose up
+```
+
+The first login user is `esaiaswestberg` and the initial password in the config is `nixos`. Change it after the first successful login:
+
+```bash
+passwd
+```
+
+Or from another admin shell:
+
+```bash
+sudo passwd esaiaswestberg
+```
+
+To rotate a secret:
+
+1. Open `secrets/loca.yaml` with `sops` and the machine age key.
+2. Update the relevant secret value.
+3. Save and close the file.
+4. Rebuild with `sudo nixos-rebuild switch --flake .#loca`.
+
+The host still has one bootstrap limitation: `hosts/loca/hardware-configuration.nix` and `hosts/loca/luks.nix` must be filled in on the target machine before the repo can evaluate cleanly.
