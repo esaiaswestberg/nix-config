@@ -26,15 +26,18 @@
       wireguard = {
         private-key = "$PROTONVPN_WIREGUARD_PRIVATE_KEY";
         peer-routes = true;
-        peers = [
-          "$PROTONVPN_WIREGUARD_PUBLIC_KEY endpoint=$PROTONVPN_WIREGUARD_ENDPOINT allowed-ips=0.0.0.0/0;::/0 persistent-keepalive=25"
-        ];
+      };
+
+      "wireguard-peer.$PROTONVPN_WIREGUARD_PUBLIC_KEY" = {
+        endpoint = "$PROTONVPN_WIREGUARD_ENDPOINT";
+        allowed-ips = "0.0.0.0/0;::/0;";
+        persistent-keepalive = 25;
       };
 
       ipv4 = {
         method = "manual";
-        addresses = [ "$PROTONVPN_IPV4_ADDRESS" ];
-        dns = [ "$PROTONVPN_DNS" ];
+        address1 = "$PROTONVPN_IPV4_ADDRESS";
+        dns = "$PROTONVPN_DNS";
         dns-priority = -50;
         never-default = false;
       };
