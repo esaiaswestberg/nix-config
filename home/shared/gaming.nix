@@ -4,6 +4,7 @@
     heroic
     lutris
     mangohud
+    prismlauncher
     protonup-qt
   ];
 }
