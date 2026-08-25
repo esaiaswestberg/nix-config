@@ -3,6 +3,7 @@
   virtualisation.docker = {
     enable = true;
     enableOnBoot = true;
+    package = pkgs.docker_29;
   };
 
   users.users.${userName}.extraGroups = [ "docker" ];
